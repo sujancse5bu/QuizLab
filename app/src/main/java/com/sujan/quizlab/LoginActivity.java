@@ -3,25 +3,25 @@ package com.sujan.quizlab;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AsyncRequestQueue;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.sujan.quizlab.api.ApiClient;
+import com.sujan.quizlab.api.request.LoginReq;
+import com.sujan.quizlab.api.request.SignUpReq;
+import com.sujan.quizlab.api.response.LoginRes;
+import com.sujan.quizlab.api.response.SignUpRes;
 
-import java.util.HashMap;
-import java.util.Map;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -32,6 +32,9 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
+
+//        AndroidNetwo
+
     }
 
 
@@ -41,67 +44,31 @@ public class LoginActivity extends AppCompatActivity {
 
         View _vPhone = findViewById(R.id.editTextPhone);
         EditText _tPhone = (EditText) _vPhone;
-        String _phoneText = _tPhone.getText().toString();
+        String _phoneText = _tPhone.getText().toString();//
 
         View _vPass = findViewById(R.id.editTextTextPassword);
         EditText _tPass = (EditText) _vPass;
-        String _passwordText = _tPass.getText().toString();
+        String _passwordText = _tPass.getText().toString();//
 
-        Log.d("sign action", _actionText);
-        Log.d("sign Phone", _phoneText);
-        Log.d("sign Password", _passwordText);
+        Log.d("sign _phoneText", _phoneText);
+        Log.d("sign _passwordText", _passwordText);
 
 
-//        if (_phoneText.length() < 11) {
-//            Toast.makeText(this, "Invalid Phone Number", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        if (_passwordText.length() < 6) {
-//            Toast.makeText(this, "Password length must be greater than 5 character.", Toast.LENGTH_LONG).show();
-//            return;
+//        if (_actionText == "Sign In") {
+//
+//        } else if (_actionText == "Sign Up") {
 //        }
 
 
+        SignUpReq signUpReq = new SignUpReq();
+        signUpReq.setPhone(RequestBody.create("+8801303458821", MediaType.parse("text/plain")));
+        signUpReq.setPassword(RequestBody.create("23423423", MediaType.parse("text/plain")));
+        signUp(signUpReq);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url;
-
-        if (_actionText == "Sign In") {
-            url = "https://salahrand.me/quiz-api-cse5-bu/api/login.php";
-        } else {
-            url = "https://salahrand.me/quiz-api-cse5-bu/api/register.php";
-        }
-
-        StringRequest signRequest = new StringRequest(
-                Request.Method.POST,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Sign res", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Sign Res error", error.getLocalizedMessage());
-                    }
-                }
-
-        ){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("phone", "01728536713");//_phoneText
-                params.put("password", "123456");//_passwordText
-                return params;
-            }
-        };
-
-        queue.add(signRequest);
-
-
+//        LoginReq loginReq = new LoginReq();
+//        loginReq.setPhone(RequestBody.create(MediaType.parse("text/plain"), "+8801303458829"));//
+//        loginReq.setPassword(RequestBody.create(MediaType.parse("text/plain"), "23423423"));//"23423423"
+//        login(loginReq);
     }
 
     public void handleChangeSignOption(View v) {
@@ -117,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("Message", _text);
 
         if (_text == "Sign Up") {
+            Log.d("check", "Sign Up Condition Matched");
             _tSignQues.setText("Already have an account?");
             _signBtn.setText("Sign Up");
             _clickedText.setText("Sign In");
@@ -127,5 +95,51 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
+    public void signUp(SignUpReq signupReq) {
+        Call<SignUpRes> signUpResCall = ApiClient.getUserService().signupUser(signupReq.getPhone(), signupReq.getPassword());
+        signUpResCall.enqueue(new Callback<SignUpRes>() {
+            @Override
+            public void onResponse(Call<SignUpRes> call, Response<SignUpRes> response) {
+                Log.d("sign res", response.toString());
+                if(response.isSuccessful()) {
+                    Log.d("sign res", "signup success");
+                } else {
+                    String message = "Error Occurred";
+                }
+                    Log.d("sign res errorBody", response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<SignUpRes> call, Throwable t) {
+//                String message = t.getLocalizedMessage();
+                Log.d("signup failure", "on no");
+//                Log.d("signup failure all", t.toString());
+            }
+        });
+    }
+
+    public void login(LoginReq loginReq) {
+        Call<LoginRes> loginResCall = ApiClient.getUserService().loginUser(loginReq.getPhone(), loginReq.getPassword());
+        loginResCall.enqueue(new Callback<LoginRes>() {
+            @Override
+            public void onResponse(Call<LoginRes> call, Response<LoginRes> response) {
+                Log.d("login res", response.toString());
+                if(response.isSuccessful()) {
+                    Log.d("login res", "signup success");
+                } else {
+                    String message = "Error Occurred";
+                }
+                Log.d("login res errorBody", response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<LoginRes> call, Throwable t) {
+//                String message = t.getLocalizedMessage();
+                Log.d("login failure", "on no");
+//                Log.d("signup failure all", t.toString());
+            }
+        });
+    }
 
 }
