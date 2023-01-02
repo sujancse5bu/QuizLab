@@ -22,7 +22,7 @@ public interface IUserService {
     Call<SignUpRes> signupUser(@Part("phone") RequestBody phone, @Part("password") RequestBody password);
 
     @Multipart
-    @POST("_login.php")
+    @POST("login.php")
     Call<LoginRes> loginUser(@Part("phone") RequestBody phone, @Part("password") RequestBody password);
 
 

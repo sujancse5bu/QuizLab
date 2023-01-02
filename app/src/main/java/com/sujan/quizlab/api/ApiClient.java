@@ -18,7 +18,6 @@ public class ApiClient {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://salahrand.me/quiz-api-cse5-bu/api/")
-//                .baseUrl("https://vps-414ae572.vps.ovh.ca/api/")
                 .client(okHttpClient)
                 .build();
 
