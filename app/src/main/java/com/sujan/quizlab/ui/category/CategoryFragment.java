@@ -1,4 +1,4 @@
-package com.sujan.quizlab.ui.dashboard;
+package com.sujan.quizlab.ui.category;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.sujan.quizlab.databinding.FragmentDashboardBinding;
+import com.sujan.quizlab.databinding.FragmentHomeBinding;
 
-public class DashboardFragment extends Fragment {
+public class CategoryFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        CategoryViewModel homeViewModel =
+                new ViewModelProvider(this).get(CategoryViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textHome;
+        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
